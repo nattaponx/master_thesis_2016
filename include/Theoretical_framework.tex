@@ -60,7 +60,7 @@ The different levels of the architecture have been mentioned as well, these incl
     \item \textit{Hardware view} that contains ECUs, sensors, actuators and Controller Area Network (CAN).
 \end{itemize}
 \vspace{0.2cm}
-The author decided to use and ADL language SysML\footnote{https://sysml.org} in modelling a functional architecture (view) and MATLAB/Simulink has also been mentioned as one of the most popular graphical modelling language and a simulation tool for modelling software architecture (view). \\
+The author decided to use and ADL language SysML\footnote{\url{https://sysml.org}} in modelling a functional architecture (view) and MATLAB/Simulink has also been mentioned as one of the most popular graphical modelling language and a simulation tool for modelling software architecture (view). \\
 
 The inconsistency of architecture in multiple views has also been explained. This is one of the problem that VCG also experiences which is in between the high- and low-level architectures. In this paper, a consistency rule has been proposed between the different views of the architecture.\\
 
@@ -85,7 +85,7 @@ From another related work, Eliasson et al. \cite{Eliasson_2} also suggest that t
 
 
 \section{Elektra software and its usage}
-At VCG, a custom proprietary tool \textit{Elektra} has been used as a main database storing data related to vehicles such as requirement documents, software components, ECUs, LCs, and LACs. These data are structured similar to directory structure\footnote{The organization of files into hierarchy of folders.} of an operating system, comprising folders and sub-folders. \todo{[to be filled in]}
+At VCG, a custom proprietary tool Elektra has been used as a main database storing data related to vehicles such as requirement documents, software components, ECUs, LCs, and LACs (see figure~\ref{fig:niesel-elektra}). These data are structured similar to directory structure\footnote{The organization of files into hierarchy of folders.} of an operating system, comprising folders and sub-folders.
 
 %FIGURE
 \begin{figure}[H]
@@ -93,9 +93,116 @@ At VCG, a custom proprietary tool \textit{Elektra} has been used as a main datab
 \captionsetup{justification=centering}
 \vspace{0cm}% Adjust vertical spacing here
 \includegraphics[width=0.95\linewidth]{figure/literatures/niesel_elektra.pdf}
-\caption{Diagram showing the tool Elektra acting as a database \cite{Niesel}}
+\caption{Diagram showing the tool \textit{Elektra} treated as a database \cite{Niesel}}
 \label{fig:niesel-elektra}
 \end{figure}
+
+To understand how Elektra has been used in development process, we arranged a meeting with Håkan Dahlen, a Software Developer who works with Central Electronic Module (CEM) which is one of the biggest and important ECUs within a car. In the meeting he  explained that searching for an artifact in Elektra was challenging because of the lack of visualization features in the tool. One of the examples that gives us a good explanation of the problem is, there was a problem with an LC where a fault signal from a port of one of its associated LCs was sent to. To solve the problem the in-house developers responsible for this component must look for the port using a search function in Elektra. The tool then returned a list of more than 20 ports of the associated LCs, which the developers had to check them one by one unless they knew by experience already which port was they were looking for. Thus, having a visualization of the signals sent/received among LCs would be an advantage in this aspect. \\
+
+\section{Model-Driven Software Engineering}
+A model has been defined by Czarnecki and Helsen ~\cite{Czarnecki} as it is an abstraction of a system and/or its environment. Models help to address questions that stakeholders may need in their work, it could be to provide a better understanding of the system which can aid in decision making.\\
+
+
+In software development, models are used to depict software artifacts in software engineering activities throughout software development life cycle. A model itself is used as primary artifact representing more abstract view of a software to be built. In this context, this methodology is known as \textit{Model-Driven Software Engineering} (MDSE), aiming for tackling the complexity problem caused by the larger size of a software due to the needs of humans \cite{Brambilla}. The goals of MDSE also include increasing the software development speed which can be done by transformations (will be described later), reducing cost in long-term, and supporting the reuse of model for repeatable processes. \\
+
+Based on the book \textit{`Allgemeine Modelltheorie (General Model Theory)'} written by Stachowiak \cite{Stachowiak}\footnote{ \url{https://modelpractice.wordpress.com/2012/07/04/model-stachowiak/} (english translation)}. He describes that a model should have 3 fundamental properties: \textit{reduction}, \textit{mapping}, and \textit{pragmatic}. Reduction property of a model is that it contains only details relevant to model creators and users. Generally speaking, the model does not include all details of its original. The mapping property means a model is always the model of something else i.e. its original. The pragmatic property of a model is the model can replace its original with respect to some purpose.
+
+\begin{equation}
+Models + Transformations = Software
+\label{eg:mde}
+\end{equation}
+
+\subsection{Modeling languages}
+\label{sec:modeling_languages}
+Similar to Wirth equation, models and transformations need to be defined in some notation which in MDSE context it is called \textit{modeling languages}. A modeling language is a tool that designers use for specifying definition of the concrete representation of a model for a software system \cite{Brambilla}. It comprises of three main ingredients: \textit{abstract syntax}, \textit{concrete syntax}, and \textit{semantics} (see figure~\ref{fig:brambilla-modeling}). \\
+
+\begin{figure}[H]
+\centering
+\captionsetup{justification=centering}
+\vspace{0cm}% Adjust vertical spacing here
+\includegraphics[width=0.6\linewidth]{figure/literatures/brambilla_modeling.pdf}
+\caption{Three main ingredients that comprise a modeling language \cite{Brambilla}}
+\label{fig:brambilla-modeling}
+\end{figure}
+
+A modeling language may consist of either graphical representations or textual representations, or both. Modeling languages can be classified into two main categories: Domain-Specific Language (DSL) and General-Purpose Modeling Language (GPML, GML, or GPL). DSLs are the languages that are designed for specific domain, context, or company. The purpose of this type of languages is to help people to describe and explain things in a certain domain. In contrast, GPLs are the languages that are designed for general use. They lack of specific features for a specific domain. An example of this type of languages is UML. \\
+
+\subsection*{Meta-models, model instances, and semantics}
+As introduced in Section \ref{sec:modeling_languages}, The modeling languages comprises of three main ingredients: \textit{abstract syntax}, \textit{concrete syntax}, and \textit{semantics} (see figure~\ref{fig:brambilla-modeling}). An abstract syntax is defined using \textit{meta-models} \cite{Brambilla}. A meta-model is a precise definition of the parts and rules needed to create valid models \cite{Tichy}, so to speak a type of model used to describe the model.
+
+\begin{figure}[H]
+\centering
+\captionsetup{justification=centering}
+\vspace{0cm}% Adjust vertical spacing here
+\includegraphics[width=0.75\linewidth]{figure/literatures/brambilla_abstract_concrete.pdf}
+\caption{sWML model's abstract syntax and graphical concrete syntax \cite{Brambilla}}
+\label{fig:brambilla-abstract-concrete}
+\end{figure}
+
+A concrete syntax is the concrete notation of a modeling language. It can be either a graphical or textual representation of \textit{model instances}. The figure~\ref{fig:brambilla-abstract-concrete} shows the abstract syntax and graphical concrete syntax of one of the well-known DSLs, simple Web Modeling Language (sWML). \\
+
+The third ingredient of a modeling language is semantics. They define the meaning of abstract syntax and concrete syntax (indirectly). In software engineering, semantics are classified into two main categories: \textit{static semantics} and \textit{dynamic semantics}. The former specifies the allowed structure in a modeling language such as well-formedness and typing of meta-models, while the latter describes the execution behavior or run-time
+effect of a model \cite{Stuurman}.
+
+
+\subsection{Model transformation}
+Model transformation is another core concept of MDSE as seen in the equation \ref{eg:mde} proposed by Stachowiak which is based on Niklaus Wirth famous equation\footnote{For further discussion, see Wirth, N. (1976). \textit{Algorithms + data structures=programs}. Englewood Cliffs, N.J.: Prentice-Hall.}. It allows the mappings between different models. An example of transformation is transforming UML class diagram\footnote{A static structure diagram that represents the structure of a system showing classes, attributes, methods, and the relations among objects.} to Entity-relationship (ER) diagram\footnote{A data model that describes data in business aspect.}.\\
+
+There are two kinds of model transformation, model-to-model (M2M) and model-to-text (M2T) transformation. M2M transformation takes in a source model as the input and the output is named a target model. The target result of M2T transformation is just a strings. The model transformation can be done by using  template-based approach or visitor-based approach \cite{Czarnecki}. In this report, we are mostly interested with M2T transformation and we have applied template-based approach. A number of template engines are available to do a M2T transformation, some are XTEND, JET and Acceleo. The template engines are capable of generating files with texts of different formats depending on how the generator file has been programed. The content of a generated file(s) depends on the meta-model specified and also the model instance of a meta-model.
+
+
+\section{Visualization of the architectures}
+The output from M2T transformation is textual description. It is used for generating visualization based on a model instance, which conforms to its meta-model. To create a visualization of the electrical architectures, several tools such as PlantUML\footnote{\url{http://plantuml.com/}} and Umple\footnote{\url{http://cruise.eecs.uottawa.ca/umple/}} can be used. In this thesis work, we choose PlantUML as a main visualization tool. PlantUML is an open-source project developed by Arnaud Roques. The tool allows users to create UML diagrams from textual description written in its DSL. The language of PlantUML is well-formed and human-readable code from which the diagrams are rendered.
+
+\begin{lstlisting}[caption=An example of textual description of a class diagram, label=code:plantuml_class]
+@startuml
+
+class Accommodation {
+  +Int Floor
+  +Int Wall
+  +Int Ceiling
+  +Int Door
+  +Int Window
+}
+
+class Apartment
+class House
+
+Accommodation <|-left- Apartment: Inheritance
+Accommodation <|-right- House: Inheritance
+
+@enduml
+\end{lstlisting}
+
+\begin{figure}[H]
+\centering
+\captionsetup{justification=centering}
+\vspace{0cm}% Adjust vertical spacing here
+\includegraphics[width=0.7\linewidth]{figure/misc/plantuml_class.png}
+\caption{UML class diagram rendered from the textual description in Listing~\ref{code:plantuml_class}}
+\label{fig:plantuml_class}
+\end{figure}
+
+Different types of UML diagrams such as class diagrams can be generated. Figure~\ref{fig:plantuml_class} shows the UML class diagram rendered from the code in Listing~\ref{code:plantuml_class}.\\
+
+UML component diagrams can also be created from the textual description by using some specific syntax shown in the table~\ref{table:plantuml_component_syntax}. The use of the syntax will be explained in Chapter~\ref{methodology}. 
+
+\begin{table}[H]
+\centering
+%\renewcommand{\arraystretch}{1.5}% Spread rows out...
+\begin{tabular}{>{\centering}m{1.8in} >{\centering}m{2in} >{\centering\arraybackslash}m{1.5in}}
+\toprule
+\textbf{Description} & \textbf{PlantUML syntax} & \textbf{Representation} \\
+\midrule
+Component & \texttt{[component]} & \includegraphics[width=0.6\linewidth]{figure/plantuml_example/component.png} \\ \hline
+Components, ports, and connection &  \texttt{[c1] \#-\# [c2]} & \includegraphics[width=0.7\linewidth]{figure/plantuml_example/port.png}\\ \hline
+Components, required/provided ports, and connection & \texttt{[c1] \#-(0-\# [c2]} & \includegraphics[width=0.8\linewidth]{figure/plantuml_example/port_type.png}\\
+\bottomrule
+\end{tabular}
+\caption{Some useful syntax for UML component diagrams}
+\label{table:plantuml_component_syntax}
+\end{table}
+
 
 \section{Data collection method}
 One of the key activities of this thesis work is to collect data from stakeholders. the team did some research and found a good method for data collection written by Basili and Weiss \cite{Basili}. The authors developed a goal-oriented data collection method for evaluating software development methodologies. The data that were used in the study were obtained from the changes in 5 software projects developed by different groups with different backgrounds using different development methodologies. They suggest 6 basic steps of data collection as follow:\\[0.1cm]
@@ -125,8 +232,3 @@ Analysing data. Data are analyzed in order to answer the questions in step \ref{
 \end{step}
 
 Basili and Weiss also suggest that validation of data is a key factor in data gathering. It must be done to ensure ensures correctness, consistency and completeness of data.
-
-
-
-\section{Visualization of electrical architectures}
-blah blah blah ... \todo{[to be filled in]}
