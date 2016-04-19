@@ -1,8 +1,7 @@
 % CREATED BY DAVID FRISK, 2015
 \chapter{Theoretical Framework}
 
-\lettrine[findent=2pt]{\fbox{\textbf{T}}}{ }his chapter introduces theory that is related to this study covering the areas of architectures in automotive domain, the two types of electrical architectures at VCG, and the proprietary tool Elektra that stores the low-level architectures. Theory of data collection method is also explained in this chapter.
-
+\lettrine[findent=2pt]{\fbox{\textbf{T}}}{ }his chapter introduces theory that is related to this study covering the areas of architectures in automotive domain, the two types of electrical architectures at VCG, and the proprietary tool Elektra that stores the low-level architectures. Theory of data collection method is also explained in this chapter. Related works will be discussed through out the chapter.
 
 \section{Architectures in automotive domain}
 Proper architecture is necessary for designing and building modern vehicles which mostly are driven by electronics and software. Here are some related works that explain how it plays an important role in automotive domain.\\
@@ -127,7 +126,7 @@ Similar to Wirth equation, models and transformations need to be defined in some
 
 A modeling language may consist of either graphical representations or textual representations, or both. Modeling languages can be classified into two main categories: Domain-Specific Language (DSL) and General-Purpose Modeling Language (GPML, GML, or GPL). DSLs are the languages that are designed for specific domain, context, or company. The purpose of this type of languages is to help people to describe and explain things in a certain domain. In contrast, GPLs are the languages that are designed for general use. They lack of specific features for a specific domain. An example of this type of languages is UML. \\
 
-\subsection*{Meta-models, model instances, and semantics}
+\subsubsection{Meta-models, model instances, and semantics}
 As introduced in Section \ref{sec:modeling_languages}, The modeling languages comprises of three main ingredients: \textit{abstract syntax}, \textit{concrete syntax}, and \textit{semantics} (see figure~\ref{fig:brambilla-modeling}). An abstract syntax is defined using \textit{meta-models} \cite{Brambilla}. A meta-model is a precise definition of the parts and rules needed to create valid models \cite{Tichy}, so to speak a type of model used to describe the model.
 
 \begin{figure}[H]
@@ -141,15 +140,37 @@ As introduced in Section \ref{sec:modeling_languages}, The modeling languages co
 
 A concrete syntax is the concrete notation of a modeling language. It can be either a graphical or textual representation of \textit{model instances}. The figure~\ref{fig:brambilla-abstract-concrete} shows the abstract syntax and graphical concrete syntax of one of the well-known DSLs, simple Web Modeling Language (sWML). \\
 
-The third ingredient of a modeling language is semantics. They define the meaning of abstract syntax and concrete syntax (indirectly). In software engineering, semantics are classified into two main categories: \textit{static semantics} and \textit{dynamic semantics}. The former specifies the allowed structure in a modeling language such as well-formedness and typing of meta-models, while the latter describes the execution behavior or run-time
-effect of a model \cite{Stuurman}.
+The third ingredient of a modeling language is semantics. They define the meaning of abstract syntax and concrete syntax (indirectly). In software engineering, semantics are classified into two main categories: \textit{static semantics} and \textit{dynamic semantics}. The former specifies the allowed structure in a modeling language such as well-formedness and typing of meta-models, while the latter describes the execution behavior or run-time effect of a model \cite{Stuurman}.\\
+
+In an integrated development environment (IDE), such as Eclipse\footnote{\url{https://eclipse.org/}}, you can create a meta-model and a model instance by using Eclipse Modeling Framework (EMF) with an Eclipse plug-in called \textit{EcoreTools}\footnote{\url{http://www.eclipse.org/ecoretools/}}. EcoreTools is a complete environment including a Graphical Ecore Editor (Figure~\ref{fig:screenshot_ecore_editor}) for creating meta-models (Ecore) and model instances. 
+
+\begin{figure}[H]
+\centering
+\captionsetup{justification=centering}
+\vspace{0cm}% Adjust vertical spacing here
+\includegraphics[width=0.95\linewidth]{figure/misc/screenshot_ecore_editor.png}
+\caption{A screenshot of Graphical Ecore Editor in Eclipse}
+\label{fig:screenshot_ecore_editor}
+\end{figure}
+
+An alternative way of creating a meta-model and a model instance is to use \textit{JSON discoverer}\footnote{\url{http://som-research.uoc.edu/tools/jsonDiscoverer/}}. JSON discoverer is an open-source project developed by Javier Luis Cánovas Izquierdo and Jordi Cabot. It provide a feature that automatically discovers the implicit schema (meta-model) and a data model (mdoel instance) of a set of JSON file. This means a set of data in JSON format is required. \\ 
+
+In our case, choosing JSON discoverer tool is a good practice since data in Elektra can be extracted in JSON format. To create a meta-model and the model instance, we simply import the JSON file as an input to the tool. An explaination of how to do so will be discussed in Chapter~\ref{methodology}.
 
 
 \subsection{Model transformation}
-Model transformation is another core concept of MDSE as seen in the equation \ref{eg:mde} proposed by Stachowiak which is based on Niklaus Wirth famous equation\footnote{For further discussion, see Wirth, N. (1976). \textit{Algorithms + data structures=programs}. Englewood Cliffs, N.J.: Prentice-Hall.}. It allows the mappings between different models. An example of transformation is transforming UML class diagram\footnote{A static structure diagram that represents the structure of a system showing classes, attributes, methods, and the relations among objects.} to Entity-relationship (ER) diagram\footnote{A data model that describes data in business aspect.}.\\
+Model transformation is another core concept of MDSE as seen in the equation \ref{eg:mde} proposed by Stachowiak which is based on Niklaus Wirth famous equation\footnote{For further discussion, see Wirth, N. (1976). \textit{Algorithms + data structures=programs}. Englewood Cliffs, N.J.: Prentice-Hall.}. It allows the mappings between different models. An example of transformation is transforming UML class diagram\footnote{A static structure diagram that represents the structure of a system showing classes, attributes, methods, and the relations among objects.} to Entity-relationship (ER) diagram\footnote{A data model that describes data in business aspect.}.
 
-There are two kinds of model transformation, model-to-model (M2M) and model-to-text (M2T) transformation. M2M transformation takes in a source model as the input and the output is named a target model. The target result of M2T transformation is just a strings. The model transformation can be done by using  template-based approach or visitor-based approach \cite{Czarnecki}. In this report, we are mostly interested with M2T transformation and we have applied template-based approach. A number of template engines are available to do a M2T transformation, some are XTEND, JET and Acceleo. The template engines are capable of generating files with texts of different formats depending on how the generator file has been programed. The content of a generated file(s) depends on the meta-model specified and also the model instance of a meta-model.
+\begin{figure}[H]
+\centering
+\captionsetup{justification=centering}
+\vspace{0cm}% Adjust vertical spacing here
+\includegraphics[width=0.8\linewidth]{figure/literatures/brambilla_m2t_example.pdf}
+\caption{An example of M2T transformation~\cite{Brambilla}}
+\label{fig:brambilla-m2t}
+\end{figure}
 
+There are two kinds of model transformation, model-to-model (M2M) and model-to-text (M2T) transformation. M2M transformation takes in a source model as the input and the output is named a target model. The target result of M2T transformation is just a strings. The model transformation can be done by using  template-based approach or visitor-based approach \cite{Czarnecki}. In this report, we are mostly interested with M2T transformation and we have applied template-based approach. A number of template engines are available to do a M2T transformation. In this thesis work we use \textit{Acceleo}\footnote{\url{https://eclipse.org/acceleo/}} as the main engine. The template engines are capable of generating files with texts of different formats depending on how the generator file has been programed. The content of a generated file(s) depends on the meta-model specified and also the model instance of a meta-model. An example of M2T transformation can be seen in Figure~\ref{fig:brambilla-m2t}.
 
 \section{Visualization of the architectures}
 The output from M2T transformation is textual description. It is used for generating visualization based on a model instance, which conforms to its meta-model. To create a visualization of the electrical architectures, several tools such as PlantUML\footnote{\url{http://plantuml.com/}} and Umple\footnote{\url{http://cruise.eecs.uottawa.ca/umple/}} can be used. In this thesis work, we choose PlantUML as a main visualization tool. PlantUML is an open-source project developed by Arnaud Roques. The tool allows users to create UML diagrams from textual description written in its DSL. The language of PlantUML is well-formed and human-readable code from which the diagrams are rendered.
@@ -178,7 +199,7 @@ Accommodation <|-right- House: Inheritance
 \centering
 \captionsetup{justification=centering}
 \vspace{0cm}% Adjust vertical spacing here
-\includegraphics[width=0.7\linewidth]{figure/misc/plantuml_class.png}
+\includegraphics[width=0.8\linewidth]{figure/misc/plantuml_class.png}
 \caption{UML class diagram rendered from the textual description in Listing~\ref{code:plantuml_class}}
 \label{fig:plantuml_class}
 \end{figure}
@@ -187,22 +208,39 @@ Different types of UML diagrams such as class diagrams can be generated. Figure~
 
 UML component diagrams can also be created from the textual description by using some specific syntax shown in the table~\ref{table:plantuml_component_syntax}. The use of the syntax will be explained in Chapter~\ref{methodology}. 
 
-\begin{table}[H]
-\centering
+%\begin{table}[H]
+%\centering
 %\renewcommand{\arraystretch}{1.5}% Spread rows out...
-\begin{tabular}{>{\centering}m{1.8in} >{\centering}m{2in} >{\centering\arraybackslash}m{1.5in}}
+\begin{longtable}{>{\centering}m{1.8in} >{\centering}m{2in} >{\centering\arraybackslash}m{1.5in}}
 \toprule
 \textbf{Description} & \textbf{PlantUML syntax} & \textbf{Representation} \\
 \midrule
+Artifact & \texttt{artifact artifact1} & \includegraphics[width=0.45\linewidth]{figure/plantuml_example/artifact.png} \\ \hline
 Component & \texttt{[component]} & \includegraphics[width=0.6\linewidth]{figure/plantuml_example/component.png} \\ \hline
 Components, ports, and connection &  \texttt{[c1] \#-\# [c2]} & \includegraphics[width=0.7\linewidth]{figure/plantuml_example/port.png}\\ \hline
 Components, required/provided ports, and connection & \texttt{[c1] \#-(0-\# [c2]} & \includegraphics[width=0.8\linewidth]{figure/plantuml_example/port_type.png}\\
 \bottomrule
-\end{tabular}
 \caption{Some useful syntax for UML component diagrams}
 \label{table:plantuml_component_syntax}
-\end{table}
+\end{longtable}
+%\end{table}
 
+With the combination use of the syntax for UML component diagram, visualizing electrical architectures consisting of LCs and ports is possible.
+%%%%%%
+
+
+\section{Stakeholders}
+On referring to the article of community tool box, there are three three different kinds of stakeholders : primary stakeholders, secondary stakeholders and key stakeholders. In this thesis, we interview different stakeholders during the phase II in methodology. Some of the advantages of interviewing the stakeholders include: getting more ideas, obtaining different perspectives, helps to avoid misunderstanding of the problem, and also increases the chances of delivering a valuable output to the stakeholders.\\
+
+The primary stakeholders in our case are the people who are directly interacting with Elektra, also named beneficiaries and we, the students are the target. The act of visualization can aid the beneficiaries in obtaining a simplified overview of a data found in Elektra which in turn can provide a quick understanding of the needed artifacts and the interactions between these artifacts. \\
+
+The secondary stakeholders are the ones who are indirectly affected by Elektra. They are the ones who may be affected by the decision made by the stakeholders who interacts directly with Elektra, which in turn will be due to the use of the obtained visualization. Our supervisors at the university can also be in a group of secondary stakeholders, they are not directly interacting with the obtained visualization but they also play a greater role in pushing forward our goals for delivering a good visualization. \\
+
+The key stakeholders are the one funding this project and these can be the two supervisors from the company. All these stakeholders play a very important role in bringing efforts that could result to a better solution of the problem that we intend to resolve.\\
+
+We, the students and as part of the primary stakeholders (targets), we intend to provide a visualization output that can aid in quick understanding of the data stored in Elektra and also provide the job opportunity for the need of having such a visualization tool to give the overview of the architecture. \\
+
+%%%%%%
 
 \section{Data collection method}
 One of the key activities of this thesis work is to collect data from stakeholders. the team did some research and found a good method for data collection written by Basili and Weiss \cite{Basili}. The authors developed a goal-oriented data collection method for evaluating software development methodologies. The data that were used in the study were obtained from the changes in 5 software projects developed by different groups with different backgrounds using different development methodologies. They suggest 6 basic steps of data collection as follow:\\[0.1cm]

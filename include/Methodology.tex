@@ -1,7 +1,7 @@
 % CREATED BY DAVID FRISK, 2015
 \chapter{Methodology}
 \label{methodology}
-\lettrine[findent=2pt]{\fbox{\textbf{T}}}{ }his chapter is divided in two phases. Each phase has a data collection, data analysis and the implementation. The  phase II has one more sub-section which involves preparing the questions to interview stakeholders.
+\lettrine[findent=2pt]{\fbox{\textbf{T}}}{ }his chapter is divided in two phases. Each phase has a data collection, data analysis and the implementation. 
 
 %%%%%%
 \section{Phase I}
@@ -44,6 +44,9 @@ The data found in the static file retrieved from Elektra is in JavaScript Object
 
 %%%%%%
 \subsection{Data analysis I}
+
+\subsubsection{Analyzing the raw JSON data}
+
 On this sub-section, we had to understand the meaning of the objects found in the JSON static file and also how most of the objects were connected. The static file had approximately 45 thousands line of code. The beginning of the static file that was retrieved from Elektra is shown in the Listing~\ref{code:origin_static_file} below:
 
 \begin{lstlisting}[caption=A small part of how the original file appear, label=code:origin_static_file]
@@ -105,14 +108,13 @@ The meta-model shown in the figure~\ref{fig:old_metamodel} has sum up most of th
 The objects of the class "destination" could be LC, port, data-element, data-type, REQSET, etc. In order to elaborate this, we will give an example of how it appears in a JSON file (see the lists that follows) and the Listing~\ref{code:lc_port_dataElem} after it : \\
 
 \begin{enumerate}
-\item a LC which is an object of a class "destination" has an object of a class "contentRelations",call it CR1,
+\item a LC which is an object of a class \texttt{destination} has an object of a class "contentRelations",call it CR1,
 \item an object CR1 can have an array of objects of a class "destinations", a port being one of the object of a class  "destination",
 \item a port has an object of a class "contentRelations", call it CR2,
 \item an object CR2 can have an array of objects of a class "destinations", a data-element being one of the object of a class "destination",
 \item a data-element has an object of a class "contentRelations", call it CR3,
 \item an object CR3 can have an array of objects of a class "destinations", a data-type being one of the object of a class "destination", etc \\
 \end{enumerate} 
-
 
 \begin{lstlisting}[caption={A sample part of a JSON file showing the relationship between a LC, a port and a data-element},label=code:lc_port_dataElem]
 {
@@ -143,23 +145,116 @@ The objects of the class "destination" could be LC, port, data-element, data-typ
 }\\
 \end{lstlisting}
 
-If you take a look again at the Listing~\ref{code:lc_port_dataElem}, you can notice a variable with the name "attributes" near the end. This variable has another variable inside of it with the name "IODirection". The variable "IODirection" determines whether a port provides to another port or a port requires another port. The principle in this context of require and provide is that it explains about a dependencies between ports and when it comes to visualize the connection between LCs, we take a look at this variable to determine on how to map the ports in a component diagram. 
-
-
-\subsubsection{Analyzing the raw JSON data}
-The data retrived from Elektra had so many informations that were somehow not needed in the visualization. The first step we did was to find a way to omit the data that was not needed and keep the one that we only needed to visualize and that was the names of the LCs, names of the ports, the value of port that determines whether a port requires another port or a port provides to another port and also we need to keep the data element for each port.
+If you take a look again at the Listing~\ref{code:lc_port_dataElem}, you can notice a variable with the name "attributes" near the end. This variable has another variable inside of it with the name "IODirection". The variable "IODirection" determines whether a port provides to another port or a port requires another port. The principle in this context of require and provide is that it explains about a dependencies between ports and when it comes to visualize the connection between LCs, we take a look at this variable to determine on how to map the ports in a component diagram.\\
 
 how it looks like, previous meta model, why it doesn't work out \todo{[to be filled in]}
 
 
 %%%%%%
 \subsection{Implementation I}
+The data retrieved from Elektra had so many information that were somehow not needed in the visualization. The first step we did was to find a way to omit the data that was not needed and keep the one that we only needed to visualize and that was the names of the LCs, names of the ports, the value of port that determines whether a port requires another port or a port provides to another port and also we need to keep the data element for each port.
 
 \subsubsection{Optimizing the raw JSON data}
-\todo{[to be filled in]}
+As you can see in the previous listing, the json data had lots of information that was necessary to be filtered. What we did was to write a java code that is able to read the original json data and get only the data that we will have used to do the visualization. Some of the JSON object that we had remained with are specifically the names of LCs, the ports for each LCs, the name of the ports, the IODirection of the port which determines the connection between the ports and and the name of the data element of the port.\\
+
+A sample code can be seen in the listing below where we first read a contentRelations JSON object to get its destinations, so first of all we get the LC, then an LC has a contentRelation JSON object and inside the object, it has a list of destinations. Now, we have a port JSON object, the port has element name and has an attribute JSON object which inside of it, the IODirection value can be retrieved. Finally we needed the name of the data element. The port JSON object is a destination that has a contentRelation JSON object, again, this object has destinations, on of the destination being a data element. The loop keeps on repeating until it has finished with all the LCs. Once the loop has finished, it saves the resulted JSON contents to a new file and this file will now be a model instance. \\
+
+To explain how the algorithm works, we will write down the steps that we follow :
+\begin{enumerate}
+\item Read from a original JSON file
+\item Get the name of the susbsytem
+\item Introduce loop 1 that gets all the LCs of the subsystem.
+\item Introduce loop 2 inside loop 1 that gets all the ports of a single LC
+\item Get the name of the port
+\item Get the name of the data-element
+\item Get the value value of \texttt{IODirection} of the port
+\item End of the loop 2 
+\item End of the loop 1
+\item Write an optimized content to a new file
+\end{enumerate}
+
+The result of the above explanation appears in the listing below :
+
+\begin{lstlisting}[caption=A sample part of the optimized JSON content,label=code:optimized_JSON]
+{
+  "elementName": "Visibility Control SPA",
+  "hasLC": [
+    {
+      "elementName": "LC 1",
+      "hasPort": [
+        {
+          "elementName": "PORT 1",
+          "IOdirection": "REQUIRE",
+          "dataElement": "DATA-ELEM 1"
+        }
+      ]
+    },
+    {
+      "elementName": "LC 2",
+      "hasPort": []
+    },
+    {
+      "elementName": "LC 3",
+      "hasPort": [
+        {
+          "elementName": "PORT 2",
+          "IOdirection": "REQUIRE",
+          "dataElement": "DATA-ELEM 2"
+        },
+        {
+          "elementName": "PORT 3",
+          "IOdirection": "REQUIRE",
+          "dataElement": "DATA-ELEM 3"
+        }
+        ....
+}
+\end{lstlisting}
+
 
 \subsubsection{Creating a new meta-model and model instance}
-\todo{[to be filled in]}
+Once the raw JSON data is optimized (Listing~\ref{code:optimized_JSON}), we created a meta-model and a model instance using the open-source tool JSON discoverer. Before getting to the point where we obtained the meta-model and the model instance, we want to explain how the discovering of JSON schema process work. Based on the paper written by the tool creators Javier Luis Cánovas Izquierdo and Jordi Cabot~\cite{Canovas}, the discovering process is a model-based process which is composed of three phases:  pre-discovery phase, single-service discovery phase, and multi-service discovery
+phase. The first phase aims to extract the low-level a JSON model out of a JSON document. The second phase is to obtain the schema information of a JSON document. The last phase aims at obtaining common schema of more than one JSON documents. Since the data of the sub-system Visiblity Control System that we extracted from Elektra was in one single JSON document, multi-service discovery phase was not used. \\
+
+With the optimized version of the raw JSON file, JSON discover provided us a very-simple-but-efficient meta-model. From Figure~\ref{fig:new_metamodel}, the meta-model comprises three classes \texttt{SubSystem}, \texttt{HasLC}, and \texttt{HasPort}. Each class has one or more attributes. \texttt{SubSystem} has an attribute \texttt{elementName} keeping the name of sub-system. The class \texttt{HasLC} has one attribute \texttt{elementName} keeping the name of LC. The class \texttt{HasPort} has three attributes namely \texttt{elementName} containing the name of port, \texttt{IODirection} specifying the type of port (\texttt{PROVIDE} or \texttt{REQUIRE}), and \texttt{dataElement} keeping the name of port. All attributes are \texttt{String} type of value.
+
+\begin{figure}[H]
+\centering
+\captionsetup{justification=centering}
+\vspace{0cm}% Adjust vertical spacing here
+\includegraphics[width=0.65\linewidth]{figure/new_model/new_metamodel.png}
+\caption{The meta-model of the optimized JSON document discovered by JSON discoverer tool}
+\label{fig:new_metamodel}
+\end{figure}
+
+The meta-model also has two class relationships: \texttt{hasLC} and \texttt{hasPort}. The first relationship is a composition meaning that the class \texttt{HasLC} will be destroyed if the class \texttt{SubSystem} is destroyed. The same type of relationship is also applied to the relationship between the class \texttt{HasLC} and \texttt{HasPort}. Both relationships have multiplicity \texttt{1..*} according to the optimized JSON document. Note that the annotations \texttt{coverage} included in all classes are resulted from the the JSON grammar rules the authors of JSON discoverer created to guide the generation of the JSON meta-model~\cite{Canovas}. \\
+
+As it has been mentioned that JSON discoverer also provides the discovery of data model (model instance). Using the same optimized JSON document, we obtained a model instance in XML\footnote{Extensible Markup Language} Metadata Interchange (XMI) file. A part of the file can be seen in Listing~\ref{code:model_instance_xmi}.
+
+\begin{lstlisting}[caption=Data model or model instance discovered by JSON discoverer,label=code:model_instance_xmi]
+<?xml version="1.0" encoding="UTF-8"?>
+<discoD:SubSystem
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:discoD="http://jsonDiscoverer/discovered/SubSystem"
+    xsi:schemaLocation="http://jsonDiscoverer/discovered/SubSystem metamodel.ecore" elementName="Visibility Control SPA">
+  <hasLC elementName="LC 1">
+    <hasPort elementName="PORT 1" IODirection="REQUIRE" dataElement="DATA-ELEM 1"/>
+  </hasLC>
+  ...
+</discoD:SubSystem>
+\end{lstlisting}
+
+Using the editor from the EcoreTools Eclipse plug-in, the model instance is visualized as seen in Figure~\ref{fig:new_model_instance}.
+
+\begin{figure}[H]
+\centering
+\captionsetup{justification=centering}
+\vspace{0cm}% Adjust vertical spacing here
+\includegraphics[width=0.6\linewidth]{figure/new_model/new_model_instance.png}
+\caption{}
+\label{fig:new_model_instance}
+\end{figure}
 
 \subsubsection{Creating a visualization using Acceleo and PlantUML}
 \todo{[to be filled in]}
@@ -169,14 +264,13 @@ how it looks like, previous meta model, why it doesn't work out \todo{[to be fil
 %%%%%%
 \section{Phase II}
 
-\subsection{Preparing the interview questions}
-It was very helpful to identify the goals of study. This had the purpose of understanding well the problem and focus on the things that are useful to our thesis. The article [MTDLG DATA] has explained couple of ways that we followed on resulting to the questions of interests used in the interview. The steps that has been applied for data collection as mentioned in the article were (1) :  Establishing the goals for data collection, (2) : Developing a list of questions of interests and (3) : Establishing data categories.
-
 \subsection{Data collection II}
 
+\subsubsection{Preparation for the interview}
+The article \cite{Basili} has explained couple of steps to follow when collecting data. We have applied the first two steps mentioned in article \cite{Basili}, the steps are establishing the goals for data collection and developing a list of questions of interests. The goals we have set for this interview are getting to knowing important artifacts on the visualization output from the each stakeholder, getting to know the artifacts that most stakeholder needs in their line of work, finding the metrics that we can use to determine the important artifacts and also understanding the needs of the stakeholders. 
+
 \subsubsection{Selecting a group of stakeholders}
-The visualization tool that the team intended to build has impact on different stakeholders. There are those stakeholders that will be directly affected by the tool and those who will be indirectly affected. We had a single group of stakeholders to interview at the company that contained different categories all grouped together, the categories can be found in the article of community tool box [STK ANALYSIS]. On referring to the article, it describes three different kinds of stakeholders which are primary stakeholders, secondary stakeholders and key stakeholders. Some of the advantages of interviewing the stakeholders include:  getting more ideas, obtaining different perspectives, contribution to us in to avoid misunderstanding of the problem, and also increases the chances of delivering a valuable output to the stakeholders. The primary stakeholders are the people who are directly interacting with Elektra, named beneficiaries and the students (us) who are designing the tool, named the target. The act of visualization can aid the beneficiaries in obtaining a simplified overview of a particular section of Elektra which in turn can provide a quick understanding of the needed components and the interactions between a component and another component. The secondary stakeholders are the ones who are indirectly affected by Elektra. They are the ones who may be affected by the decision made by the stakeholders who interacts directly with Elektra, which in turn will be due to the use of visualization tool on Elektra. Our supervisors at the university can also be in a group of secondary stakeholders, their are not directly interacting with the tool but they also play a greater role in pushing forward our goals for delivering the visualization tool. The key stakeholders are the one funding this project and these can be the two supervisors from the company. All these stakeholders play a very important role in bringing efforts that could result to a better solution of the problem that we intend to resolve.\\
-We, who are students and as part of the primary stakeholders (targets), we intended to build a tool that can aid in quick understanding of the architecture and also provide the job opportunity for the need of having such a tool in overview of the architecture. We selected a group of stakeholders to interview. We explained them what were our intentions and what they could provide us to make sure we get the data that we needed.\todo{[to be filled in]}
+Since the visualization is based on a single subsystem namely Visibility Control SPA, we would prefer to interview the stakeholders that uses this subsystem often. These are the primary stakeholders since they are directly interacting with the ELektra.
 
 \subsubsection{Interviewing the selected stakeholders}
 \todo{[to be filled in]}
