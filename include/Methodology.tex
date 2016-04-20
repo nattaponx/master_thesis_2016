@@ -257,7 +257,7 @@ Using the editor from the EcoreTools Eclipse plug-in, the model instance and the
 \end{figure}
 
 \subsubsection{Creating a visualization using Acceleo and PlantUML}
-Up to this point, we already had the meta-model and the model-instance from the optimized JSON document. The next step was to do M2T transformation, which could be done by create an Acceleo template for textual description. The complete template is included in Appendix~\ref{app1} Listing~\ref{code:acceleo_template}. Only important pieces of code will be explained in this section.\\
+Up to this point, we already had the meta-model and the model-instance from the optimized JSON document. The next step was to do M2T transformation, which could be done by create an Acceleo template for textual description. The complete template is included in Appendix~\ref{app1} Section~\ref{app1:result_acceleo_template}. Only important pieces of code will be explained in this section.\\
 
 \subsubsection*{Defining sub-system}
 \begin{lstlisting}[caption=Defining \texttt{artifact} for the sub-system,label=code:defining_subsystem]
@@ -312,7 +312,38 @@ Ports and connections had to be in the same line, as the following syntax:\\
 \vspace{1em}
 \texttt{A} is the name of a LC. \texttt{B} is the number part of a port name, for example, \texttt{1} is the number part of \texttt{PORT 1}. \texttt{C} is the data element of the port. The connection between two ports was defined based on the type of a port (attribute \texttt{IODirection}), \texttt{\#--(} for REQUIRE port and \texttt{\#--O} for PROVIDE port. \\
 
-To obtain the name of all LCs and their ports, we created a new for-loop looping through \texttt{HasLC} and an inner for-loop to get port(s) of each LC looping through \texttt{HasPort}. This resulted in obtaining \texttt{$A_1$ "$B_1$-$C_1$"}. After that, we created another two for-loops inside the inner for-loop in order to search for each LC's pair, resulting in obtaining \texttt{"$B_2$-$C_2$" $A_2$}. An if-statement was used to pair two ports by checking if their attributes \texttt{dataElement} have the same value, to validate that the two LCs were not the same LC.
+To obtain the name of all LCs and their ports, we created a new for-loop looping through \texttt{HasLC} and an inner for-loop to get port(s) of each LC looping through \texttt{HasPort}. This resulted in obtaining \texttt{$A_1$ "$B_1$-$C_1$"}. After that, we created another two for-loops inside the inner for-loop in order to search for each LC's pair, resulting in obtaining \texttt{"$B_2$-$C_2$" $A_2$}. An if-statement was used to pair two ports by checking if their attributes \texttt{dataElement} have the same value, and validate that the two LCs were not the same LC. For the connection between two ports, two if-statements were created: one to check the type of each port, and another to pair between two ports having different types. This results in having two representations of connections as follow:
+
+\begin{itemize}
+    \item REQUIRE-PROVIDE, \texttt{\#--(0--\#}
+    \item PROVIDE-REQUIRE, \texttt{\#--0)--\#}
+\end{itemize}
+
+From the template, Acceleo generated a textual description that could be visualized using PlantUML. Listing~\ref{code:plantuml_textual} shows a piece of it (complete textual description is included in Appendix~\ref{app1} Section~\ref{app1:result_textual_desc}.
+
+\begin{lstlisting}[caption=A piece of textual representation generated from Acceleo template engine,label=code:plantuml_textual]
+@startuml
+
+skinparam nodesep 80
+skinparam ranksep 80
+
+artifact VisibilityControlSPA {
+[LC1]
+[LC2]
+[LC3]
+...
+[LC18]
+
+LC1 "1-1" #--(0--# "165-1" LC18
+LC3 "2-2" #--(0--# "144-2" LC17
+LC3 "4-4" #--(0--# "116-4" LC10
+...
+LC15 "129-91" #--0)--# "156-91" LC18
+}
+
+@enduml
+\end{lstlisting}
+
 
 %------------------------------------------------------------------%
 %%%%%%

@@ -2,6 +2,7 @@
 \chapter{Appendix 1}
 \label{app1}
 \section{Acceleo template for generated textual description in PlantUML}
+\label{app1:result_acceleo_template}
 \begin{lstlisting}[caption=Acceleo template for generated textual description in PlantUML lanauge,label=code:acceleo_template]
 [comment encoding = UTF-8 /]
 [module generate('http://jsonDiscoverer/discovered/SubSystem')/]
@@ -38,4 +39,96 @@ artifact [subsystem.elementName.replaceAll(' ', '')/] {
 
 [/file]
 [/template]
+\end{lstlisting}
+
+
+\section{Textual description generated from the Acceleo template}
+\label{app1:result_textual_desc}
+\begin{lstlisting}[caption=A textual representation generated from Acceleo template engine,label=code:plantuml_textual_complete]
+@startuml
+skinparam nodesep 80
+skinparam ranksep 80
+
+artifact VisibilityControlSPA {
+[LC1]
+[LC2]
+[LC3]
+[LC4]
+[LC5]
+[LC6]
+[LC7]
+[LC8]
+[LC9]
+[LC10]
+[LC11]
+[LC12]
+[LC13]
+[LC14]
+[LC15]
+[LC16]
+[LC17]
+[LC18]
+
+LC1 "1-1" #--(0--# "165-1" LC18
+LC3 "2-2" #--(0--# "144-2" LC17
+LC3 "4-4" #--(0--# "116-4" LC10
+LC3 "8-8" #--0)--# "146-8" LC17
+LC3 "9-9" #--(0--# "135-9" LC17
+LC3 "11-11" #--0)--# "112-11" LC10
+LC3 "14-14" #--(0--# "84-14" LC6
+LC3 "16-16" #--0)--# "123-16" LC12
+LC3 "20-20" #--(0--# "147-20" LC17
+LC3 "22-22" #--(0--# "91-22" LC6
+LC3 "23-23" #--(0--# "106-23" LC10
+LC3 "24-24" #--(0--# "124-24" LC13
+LC3 "26-26" #--0)--# "113-26" LC10
+LC3 "28-28" #--0)--# "77-28" LC6
+LC3 "29-29" #--0)--# "80-29" LC6
+LC3 "31-31" #--0)--# "111-31" LC10
+LC3 "39-39" #--0)--# "119-39" LC11
+LC3 "40-40" #--(0--# "78-40" LC6
+LC3 "42-42" #--(0--# "101-42" LC10
+LC3 "44-44" #--0)--# "85-44" LC6
+LC3 "44-44" #--0)--# "142-44" LC17
+LC3 "46-46" #--0)--# "120-46" LC12
+LC3 "49-49" #--(0--# "109-49" LC10
+LC3 "50-50" #--(0--# "81-50" LC6
+LC3 "51-51" #--0)--# "133-51" LC17
+LC3 "52-52" #--(0--# "104-52" LC10
+LC3 "54-54" #--0)--# "137-54" LC17
+LC3 "55-55" #--(0--# "82-55" LC6
+LC3 "57-57" #--(0--# "105-57" LC10
+LC3 "58-58" #--0)--# "134-58" LC17
+LC3 "65-65" #--0)--# "89-65" LC6
+LC3 "65-65" #--0)--# "138-65" LC17
+LC3 "67-67" #--(0--# "88-67" LC6
+LC3 "68-68" #--0)--# "87-68" LC6
+LC3 "68-68" #--0)--# "149-68" LC17
+LC3 "69-69" #--(0--# "79-69" LC6
+LC3 "71-71" #--(0--# "140-71" LC17
+LC3 "73-73" #--0)--# "117-73" LC10
+LC5 "75-75" #--(0--# "174-75" LC18
+LC6 "76-2" #--(0--# "144-2" LC17
+LC6 "78-40" #--0)--# "107-40" LC10
+LC6 "79-69" #--0)--# "139-69" LC17
+LC6 "81-50" #--0)--# "145-50" LC17
+LC6 "83-76" #--(0--# "102-76" LC10
+LC6 "84-14" #--0)--# "148-14" LC17
+LC6 "86-77" #--(0--# "110-77" LC10
+LC6 "90-20" #--(0--# "147-20" LC17
+LC6 "91-22" #--0)--# "143-22" LC17
+LC6 "92-78" #--(0--# "114-78" LC10
+LC7 "95-81" #--0)--# "172-81" LC18
+LC7 "97-82" #--0)--# "177-82" LC18
+LC8 "98-83" #--(0--# "169-83" LC18
+LC9 "99-84" #--(0--# "175-84" LC18
+LC9 "100-85" #--0)--# "160-85" LC18
+LC10 "102-76" #--0)--# "136-76" LC17
+LC10 "114-78" #--0)--# "141-78" LC17
+LC10 "115-86" #--0)--# "122-86" LC12
+LC15 "128-90" #--(0--# "176-90" LC18
+LC15 "129-91" #--0)--# "156-91" LC18
+}
+
+@enduml
 \end{lstlisting}
