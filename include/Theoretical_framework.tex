@@ -63,8 +63,16 @@ The author decided to use and ADL language SysML\footnote{\url{https://sysml.org
 
 The inconsistency of architecture in multiple views has also been explained. This is one of the problem that VCG also experiences which is in between the high- and low-level architectures. In this paper, a consistency rule has been proposed between the different views of the architecture.\\
 
+%%%
+\section{Visualization on the software system}
+The emerging of component based software are said to have a repercussions on software visualization\cite{Jean}. On visualizing a component-based software products, one has to consider a visualization of  component model, software components and of software assemblies.The article suggested to visualize a component model by describing it as a set of UML class diagram (meta-model). The meta-model will have all the necessary concepts to describe components without getting to the implementation details. The concept of meta-modelling can be considered as a basis in specifying a graphical notation of visualizing components. On visualizing components, a specific notation must be used for each component technology. The graphical notation simplifies the understanding of a meta-model. The paper has also mentioned the usefulness of a graphical notation such as it allows software engineers to communicate without the burden of speaking in technical terms.\\
+
+The software engineers think in low-level programming when designing a component model rather than a conceptual entities. The article had mentioned the useful of having the visualization of the software products to software engineers since they design the model blindly, so the visualization will help them to get a complete overview of the implementation. The article has also elaborated several options that we can apply in visualizing the data stored in Elektra. Some challenges have been mentioned in visualizing complex components which may have many ports, so in this case, hiding ports with no connection and show only ports with connection can be of useful when it comes to a visualization process. Another challenge that was mentioned was the visualizing the components with complex connectors.\\
+
+The visualization was also done at in Ericsson, where the task was to recover the architecture, it involved getting models from a source code\cite{Adam}. The article has mentioned on the advantages of having an automated visualization as it makes the architecture consistent with the current implementation found in a source code. In this article, they mentioned on grouping the ports using cable and port group pattern, it is the technique to merge the connectors to a single connector. The use of abstraction pattern can be can be useful in our case as the single component can end up having many ports and hence make the diagram not readable. In our case, we may be needed to find the corresponding metrics that will help to group the ports based on some sort of similarity. Another thing that was mentioned in this article was the way of preserving the hidden information, this implies that once the artifacts has been grouped, there will not be a way to see what made this particular group but instead, a comment (text) next to the grouped component could be useful to cover what's inside the grouped component.
 
 
+%%%%
 \section{Low- and high-level electrical architectures at VCG}
 To have a better understanding of how low- and high-level electrical architectures have been constructed and used in VCG. The team studied some related works that were conducted in the company.\\
 
@@ -170,9 +178,21 @@ Model transformation is another core concept of MDSE as seen in the equation \re
 \label{fig:brambilla-m2t}
 \end{figure}
 
-There are two kinds of model transformation, model-to-model (M2M) and model-to-text (M2T) transformation. M2M transformation takes in a source model as the input and the output is named a target model. The target result of M2T transformation is just a strings. The model transformation can be done by using  template-based approach or visitor-based approach \cite{Czarnecki}. In this report, we are mostly interested with M2T transformation and we have applied template-based approach. A number of template engines are available to do a M2T transformation. In this thesis work we use \textit{Acceleo}\footnote{\url{https://eclipse.org/acceleo/}} as the main engine. The template engines are capable of generating files with texts of different formats depending on how the generator file has been programed. The content of a generated file(s) depends on the meta-model specified and also the model instance of a meta-model. An example of M2T transformation can be seen in Figure~\ref{fig:brambilla-m2t}.
+There are two kinds of model transformation, model-to-model (M2M) and model-to-text (M2T) transformation. M2M transformation takes in a source model as the input and the output is named a target model. The target result of M2T transformation is just a strings. The model transformation can be done by using  template-based approach or visitor-based approach \cite{Czarnecki}. In this report, we are mostly interested with M2T transformation and we have applied template-based approach. A number of template engines are available to do a M2T transformation. The template engines are capable of generating files with texts of different formats depending on how the generator file has been programed. The content of a generated file(s) depends on the meta-model specified and also the model instance of a meta-model. An example of M2T transformation can be seen in Figure~\ref{fig:brambilla-m2t}. \\
 
-\section{Visualization of the architectures}
+In this thesis work we use \textit{Acceleo}\footnote{\url{https://eclipse.org/acceleo/}} as the main engine. The structure of the template (see Listing~\ref{code:acceleo_template_example}) consists of module, template, and generating files. Module in Line~\ref{line:acceleo_exam_module} is the part where Uniform Resource Identifiers (URIs) of the meta-models instantiating the models that you want to generate code from are parameterized. Template in Line~\ref{line:acceleo_exam_template} is where the name of the template and its parameters are specified. The parameters are declared in the convention \texttt{<name>:<type>}, where \texttt{name} is the parameter name belonging to \texttt{type} which is provided by meta-model. The code in Line~\ref{line:acceleo_exam_main} indicates the entry point of the generation. Line~\ref{line:acceleo_exam_file} is for specifying the name of generated file. The code written after that will be generated in the file. 
+
+\begin{lstlisting}[escapechar=|,caption=An example of Acceleo template, label=code:acceleo_template_example]
+[module moduleName('http://www.eclipse.org/emf/2002/Ecore')/]|\label{line:acceleo_exam_module}|
+[template public genMyTemplate(aParam: EClass)]|\label{line:acceleo_exam_template}|
+[comment @main/]|\label{line:acceleo_exam_main}|
+[file ('filename.txt', false, 'UTF-8')]|\label{line:acceleo_exam_file}|
+....
+[/template]
+\end{lstlisting}
+
+
+\section{Graphical notation of the generated text}
 The output from M2T transformation is textual description. It is used for generating visualization based on a model instance, which conforms to its meta-model. To create a visualization of the electrical architectures, several tools such as PlantUML\footnote{\url{http://plantuml.com/}} and Umple\footnote{\url{http://cruise.eecs.uottawa.ca/umple/}} can be used. In this thesis work, we choose PlantUML as a main visualization tool. PlantUML is an open-source project developed by Arnaud Roques. The tool allows users to create UML diagrams from textual description written in its DSL. The language of PlantUML is well-formed and human-readable code from which the diagrams are rendered.
 
 \begin{lstlisting}[caption=An example of textual description of a class diagram, label=code:plantuml_class]

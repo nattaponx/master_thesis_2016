@@ -1,3 +1,41 @@
 % CREATED BY DAVID FRISK, 2015
 \chapter{Appendix 1}
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+\label{app1}
+\section{Acceleo template for generated textual description in PlantUML}
+\begin{lstlisting}[caption=Acceleo template for generated textual description in PlantUML lanauge,label=code:acceleo_template]
+[comment encoding = UTF-8 /]
+[module generate('http://jsonDiscoverer/discovered/SubSystem')/]
+
+[template public generateElement(subsystem : SubSystem)]
+[comment @main/]
+[file (subsystem.elementName, false, 'UTF-8')]
+
+@startuml
+skinparam nodesep 80
+skinparam ranksep 80
+artifact [subsystem.elementName.replaceAll(' ', '')/] {
+[for (lc:HasLC | subsystem.hasLC)]
+['['/][lc.elementName.replace(' ', '')/][']'/]
+[/for]
+
+[for (lc:HasLC | subsystem.hasLC)]
+[for (port:HasPort | lc.hasPort)]
+[for (lc2:HasLC | subsystem.hasLC)]
+[for (port2:HasPort | lc2.hasPort)]
+[if ((port2.dataElement = port.dataElement) and not (port2.elementName = port.elementName) and not (lc.elementName = lc2.elementName)) and (lc2.elementName.replace(' ', '').substring(3).toInteger() > lc.elementName.replace(' ', '').substring(3).toInteger())]
+[if not (port.IODirection = port2.IODirection)]
+[lc.elementName.replace(' ', '')/] "[port.elementName.substring(6)/]['-'/][port.dataElement.substring(11)/]" [if (port.IODirection = 'REQUIRE')]#--([elseif (port.IODirection = 'PROVIDE')]#--0[/if][if (port2.IODirection = 'REQUIRE')])--#[elseif (port2.IODirection = 'PROVIDE')]0--#[/if] "[port2.elementName.substring(6)/]['-'/][port2.dataElement.substring(11)/]" [lc2.elementName.replace(' ', '')/]
+[elseif (port.IODirection = port2.IODirection)]
+[/if]
+[/if]
+[/for]
+[/for]
+[/for]
+[/for]
+}
+
+@enduml
+
+[/file]
+[/template]
+\end{lstlisting}

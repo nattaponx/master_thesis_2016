@@ -1,7 +1,7 @@
 % CREATED BY DAVID FRISK, 2015
 \chapter{Methodology}
 \label{methodology}
-\lettrine[findent=2pt]{\fbox{\textbf{T}}}{ }his chapter is divided in two phases. Each phase has a data collection, data analysis and the implementation. 
+\lettrine[findent=2pt]{\fbox{\textbf{T}}}{ }he methodology of this thesis work is comprised of phase I and phase II. Each phase has three main activities: data collection, data analysis, and implementation of the visualization. The data collection included the data from the custom proprietary tool Elektra, and the data from interviewing stakeholders. These data were then analyzed and used as main sources for the implementation.
 
 %%%%%%
 \section{Phase I}
@@ -215,7 +215,7 @@ The result of the above explanation appears in the listing below :
 Once the raw JSON data is optimized (Listing~\ref{code:optimized_JSON}), we created a meta-model and a model instance using the open-source tool JSON discoverer. Before getting to the point where we obtained the meta-model and the model instance, we want to explain how the discovering of JSON schema process work. Based on the paper written by the tool creators Javier Luis Cánovas Izquierdo and Jordi Cabot~\cite{Canovas}, the discovering process is a model-based process which is composed of three phases:  pre-discovery phase, single-service discovery phase, and multi-service discovery
 phase. The first phase aims to extract the low-level a JSON model out of a JSON document. The second phase is to obtain the schema information of a JSON document. The last phase aims at obtaining common schema of more than one JSON documents. Since the data of the sub-system Visiblity Control System that we extracted from Elektra was in one single JSON document, multi-service discovery phase was not used. \\
 
-With the optimized version of the raw JSON file, JSON discover provided us a very-simple-but-efficient meta-model. From Figure~\ref{fig:new_metamodel}, the meta-model comprises three classes \texttt{SubSystem}, \texttt{HasLC}, and \texttt{HasPort}. Each class has one or more attributes. \texttt{SubSystem} has an attribute \texttt{elementName} keeping the name of sub-system. The class \texttt{HasLC} has one attribute \texttt{elementName} keeping the name of LC. The class \texttt{HasPort} has three attributes namely \texttt{elementName} containing the name of port, \texttt{IODirection} specifying the type of port (\texttt{PROVIDE} or \texttt{REQUIRE}), and \texttt{dataElement} keeping the name of port. All attributes are \texttt{String} type of value.
+With the optimized version of the raw JSON file, JSON discover provided us a very-simple-but-efficient meta-model. From Figure~\ref{fig:new_metamodel}, the meta-model comprises three classes \texttt{SubSystem}, \texttt{HasLC}, and \texttt{HasPort}. Each class has one or more attributes. \texttt{SubSystem} has an attribute \texttt{elementName} keeping the name of sub-system. The class \texttt{HasLC} has one attribute \texttt{elementName} keeping the name of LC. The class \texttt{HasPort} has three attributes (properties) namely \texttt{elementName} containing the name of port, \texttt{IODirection} specifying the type of port (\texttt{PROVIDE} or \texttt{REQUIRE}), and \texttt{dataElement} keeping the name of port. All attributes are \texttt{String} type of value.
 
 \begin{figure}[H]
 \centering
@@ -245,20 +245,74 @@ As it has been mentioned that JSON discoverer also provides the discovery of dat
 </discoD:SubSystem>
 \end{lstlisting}
 
-Using the editor from the EcoreTools Eclipse plug-in, the model instance is visualized as seen in Figure~\ref{fig:new_model_instance}.
+Using the editor from the EcoreTools Eclipse plug-in, the model instance and the properties of each class are visualized as seen in Figure~\ref{fig:new_model_instance}. From the model instance (left), it can be seen that the attribute \texttt{elementName} of the class \texttt{SubSystem} is \texttt{"Visibility Control SPA"}. It has 18 children (\texttt{HasLC}), \texttt{LC 1}, \texttt{LC 2}, \texttt{LC 3}, ..., \texttt{LC 18}. Each child has its own \texttt{HasPort}--\texttt{PORT 1} belongs to \texttt{LC 1}, for example. The properties of each class are shown on the right side of the figure. Note that the model instance was constructed conforming to the meta-model in Figure~\ref{fig:new_metamodel}.
 
 \begin{figure}[H]
 \centering
 \captionsetup{justification=centering}
 \vspace{0cm}% Adjust vertical spacing here
-\includegraphics[width=0.6\linewidth]{figure/new_model/new_model_instance.png}
-\caption{}
+\includegraphics[width=0.95\linewidth]{figure/new_model/new_model_instance.png}
+\caption{The model instance resulted from the optimized JSON document}
 \label{fig:new_model_instance}
 \end{figure}
 
 \subsubsection{Creating a visualization using Acceleo and PlantUML}
-\todo{[to be filled in]}
+Up to this point, we already had the meta-model and the model-instance from the optimized JSON document. The next step was to do M2T transformation, which could be done by create an Acceleo template for textual description. The complete template is included in Appendix~\ref{app1} Listing~\ref{code:acceleo_template}. Only important pieces of code will be explained in this section.\\
 
+\subsubsection*{Defining sub-system}
+\begin{lstlisting}[caption=Defining \texttt{artifact} for the sub-system,label=code:defining_subsystem]
+...
+[template public generateElement(subsystem : SubSystem)]
+...
+artifact [subsystem.elementName.replaceAll(' ', '')/] {
+...
+}
+\end{lstlisting}
+
+The sub-system \texttt{Visibility Control SPA} is visualized as an \texttt{artifact} following by its name. To be able to get the name, we first created a \texttt{SubSystem}-type parameter, namely \texttt{subsystem}. With this parameter, we could access its attribute \texttt{elementName}. An \texttt{replace (String substring, String replacement)} was used to remove which space in the value because PlantUML does not support name with white space. Thus, the name printed in the visualization was \texttt{VisibilityControlSPA}.
+
+\subsubsection*{Defining LCs}
+
+\begin{lstlisting}[caption=Defining \texttt{component} for the LCs,label=code:defining_lc]
+...
+[for (lc:HasLC | subsystem.hasLC)]
+['['/][lc.elementName.replace(' ', '')/][']'/]
+[/for]
+...
+\end{lstlisting}
+
+Inside the \texttt{artifact}, a for-loop statement was for retrieving all LCs belonging to the sub-system. The for-loop had a parameter \texttt{lc} belonging to the class \texttt{HasLC} which could be accessed via the class relationship \texttt{hasLC}. The name of the LCs could be obtained by \texttt{lc.elementName}, and the \texttt{replace} operation was used as well to remove white space.
+
+
+\subsubsection*{Defining ports and connections}
+
+\begin{lstlisting}[caption=Defining ports and connections,label=code:defining_ports_connections]
+...
+[for (lc:HasLC | subsystem.hasLC)]
+[for (port:HasPort | lc.hasPort)]
+[for (lc2:HasLC | subsystem.hasLC)]
+[for (port2:HasPort | lc2.hasPort)]
+[if ((port2.dataElement = port.dataElement) and not (port2.elementName = port.elementName) and not (lc.elementName = lc2.elementName)) and (lc2.elementName.replace(' ', '').substring(3).toInteger() > lc.elementName.replace(' ', '').substring(3).toInteger())]
+[if not (port.IODirection = port2.IODirection)]
+[lc.elementName.replace(' ', '')/] "[port.elementName.substring(6)/]['-'/][port.dataElement.substring(11)/]" [if (port.IODirection = 'REQUIRE')]#--([elseif (port.IODirection = 'PROVIDE')]#--0[/if][if (port2.IODirection = 'REQUIRE')])--#[elseif (port2.IODirection = 'PROVIDE')]0--#[/if] "[port2.elementName.substring(6)/]['-'/][port2.dataElement.substring(11)/]" [lc2.elementName.replace(' ', '')/]
+[elseif (port.IODirection = port2.IODirection)]
+[/if]
+[/if]
+[/for]
+[/for]
+[/for]
+[/for]
+...
+\end{lstlisting}
+
+Ports and connections had to be in the same line, as the following syntax:\\
+\begin{center}
+\texttt{$A_1$ "$B_1$-$C_1$" \#--(0--\# "$B_2$-$C_2$" $A_2$}
+\end{center}
+\vspace{1em}
+\texttt{A} is the name of a LC. \texttt{B} is the number part of a port name, for example, \texttt{1} is the number part of \texttt{PORT 1}. \texttt{C} is the data element of the port. The connection between two ports was defined based on the type of a port (attribute \texttt{IODirection}), \texttt{\#--(} for REQUIRE port and \texttt{\#--O} for PROVIDE port. \\
+
+To obtain the name of all LCs and their ports, we created a new for-loop looping through \texttt{HasLC} and an inner for-loop to get port(s) of each LC looping through \texttt{HasPort}. This resulted in obtaining \texttt{$A_1$ "$B_1$-$C_1$"}. After that, we created another two for-loops inside the inner for-loop in order to search for each LC's pair, resulting in obtaining \texttt{"$B_2$-$C_2$" $A_2$}. An if-statement was used to pair two ports by checking if their attributes \texttt{dataElement} have the same value, to validate that the two LCs were not the same LC.
 
 %------------------------------------------------------------------%
 %%%%%%
