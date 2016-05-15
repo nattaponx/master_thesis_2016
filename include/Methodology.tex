@@ -1,35 +1,33 @@
 % CREATED BY DAVID FRISK, 2015
 \chapter{Methodology}
 \label{methodology}
-\lettrine[findent=2pt]{\fbox{\textbf{T}}}{ }he methodology of this thesis work is comprised of phase I and phase II. Each phase has three main activities: data collection, data analysis, and implementation of the visualization. The data collection included the data from the custom proprietary tool Elektra, and the data from interviewing stakeholders. These data were then analyzed and used as main sources for the implementation.
-
-%%%%%%
-\section{Phase I}
-
-\subsection{Data collection I}
-Since Elektra has a lot of data in it, we had to decide on what area to visualize and at which level of abstract. The next sub-section will cover how we ended up deciding on a scope to visualize.
-
-\subsubsection{Identifying a scope to visualize}
-As it has been briefly explained in section 2.3, we did the first meeting with Håkan Dahlen at Volvo and he played a big role in identifying the scope of the system to be visualized. We had a long discussion for approximately 2 hours and it was then we figured that we needed to visualize the logical view in Elektra. This view includes the LCs, ports and data elements. \\
-
-If we describe a bit about what is the relationship between ECU and LC is that : first of all, an ECU can have one to many software compositions (SWCs). The SWC is a group of LCs. The LC can have zero to many ports and each port has one data element, it is the data element that connect one LC to another through ports. For example : LC 1 with port 1 can be linked to LC 2 with port 2 only if the port 1 and port 2 has the same data element. Håkan also proposed to visualize the physical view in Elektra which will includes the ECUs.\\
-
-In the discussion with Håkan, we decided to visualize a sub-system. An example of a simple sub-system can be observed from the figure~\ref{fig:hakan-diagram-board} on the top left, there is a small box named SUBSYSTEM and inside of it, there are two ECUs, one ECU has two LCs and another ECU has one LC. The LCs are connected together via ports. The LCs inside the sub-system are also connected to other LCs outside the sub-system but our scope is only for LCs inside a single sub-system. So for this report, we will visualize a sub-system named Visibility Control SPA, this sub-system has 18 LCs and 179 ports at the moment.\\
-
+\lettrine[findent=2pt]{\fbox{\textbf{T}}}{ }his study was conducted using Action Research (AR) which is one of the common primary approaches to research in software engineering~\cite{Sjoberg}. AR consists of fours basic steps~\cite{Glanz}, focus selection, data collection, data analysis and interpretation, and take action (shown in Figure~\ref{fig:action_research}). The general concept of AR steps and how it was applied to this study are introduced in this Chapter, while the implementation of the approach will be presented in Chapter~\ref{implementation}.
 
 \begin{figure}[H]
 \centering
 \captionsetup{justification=centering}
 \vspace{0cm}% Adjust vertical spacing here
-\includegraphics[width=0.85\linewidth]{figure/misc/Hakan.jpg}
-\caption{Example of a visualization from a stakeholder}
-\label{fig:hakan-diagram-board}
+\includegraphics[width=0.3\linewidth]{figure/misc/ar.pdf}
+\caption{Steps in action research}
+\label{fig:action_research}
 \end{figure}
 
-\subsubsection{Extracting data from Elektra}
-The best way that was suggested in retrieving data from Elektra was to use an application program interface(API). At Volvo, we were given a documentation that has a list of APIs and the description of how to use the APIs in order to get the data of your need from Elektra. In order to access the data, one has to be within the Volvo network. Since we did most of our studies outside the company area then we were forced to use the censored data file. The use of API is more dynamic than visualizing a single static file of data. However, this does not make the step to retrieve data from Elektra less meaningful, it is still the same data but later on, a static file will need to be replaced with a specific API url to get the data from Elektra.\\
+AR is cyclical approach, meaning that the process does not have to be terminated after the fourth step. In this thesis work we started with selecting a focus and identifying a scope of visualization with one of stakeholders. then, we collected the first set of data from the Database and analyzed them. We took action by developing a prototype of automated visualization and presented it to the stakeholder in order to get some feedback for the improvement. Once we finalized the automated visualization, we began collecting the second set of data, by conducting semi-structured interview sessions with other stakeholders who use the Database as a tool in completing their daily assignments. During the interview sessions we recorded conversations. The second data analysis was done by transcribing the tape records, and the transcripts were analyzed using a scientific method for qualitative data analysis called \texttt{Coding} (will be described in Section~\ref{ME:coding}). In the final part of the work, the results from coding process were used for answering the research questions of this study.
 
-The data found in the static file retrieved from Elektra is in JavaScript Object Notation(JSON) format. A simple example of JSON object is shown in the  Listing~\ref{code:report_JSON_Object} below :
+\section{Data source}
+Data used in this thesis work were collected from two main sources as follow:
+\vspace{0.2em}
+\begin{itemize}
+    \item Raw JSON data from the Database
+    \item Data from interviewing stakeholders
+\end{itemize}
+\vspace{0.2em}
+
+\section{Data collection}
+\subsection{Data from the Database}
+To create an automated visualization, we extracted data from the Database. The best way that was suggested in retrieving data from the Database was to use an application program interface (API). At VCG, we were given a documentation that has a list of APIs and the description of how to use the APIs in order to get the data from the Database. In order to access the data, one has to be within the VCG network. Since we were not granted access, we did most of the work outside the company area and were forced to use the censored data file. The use of API is more dynamic than visualizing a static file. However, this does not make the step to retrieve data from the Database less meaningful, it is still the same data but later on, a static file will need to be replaced with a specific API to get the data from the Database.\\
+
+The data found in the static file retrieved from the Database is in JSON format. A simple example of JSON object is shown in the  Listing~\ref{code:report_JSON_Object} below:
 
 \begin{lstlisting}[caption=An example of JSON object, label=code:report_JSON_Object]
 {
@@ -42,335 +40,46 @@ The data found in the static file retrieved from Elektra is in JavaScript Object
 }
 \end{lstlisting}
 
-%%%%%%
-\subsection{Data analysis I}
 
-\subsubsection{Analyzing the raw JSON data}
+\subsection{Data from interviewing stakeholders}
+\label{ME:data_from_interviewing_stakeholders}
+Three semi-structured interviews were conducted in the later part of the study after the automated visualization prototype was developed. The purpose of each interview was to collect needs from each stakeholder towards the automated visualization. We, as the interviewers developed a list of pre-determined questions aiming at answering the two research questions in Section~\ref{IN:rq} and their opinions on the automated visualization prototype.\\
 
-On this sub-section, we had to understand the meaning of the objects found in the JSON static file and also how most of the objects were connected. The static file had approximately 45 thousands line of code. The beginning of the static file that was retrieved from Elektra is shown in the Listing~\ref{code:origin_static_file} below:
-
-\begin{lstlisting}[caption=A small part of how the original file appear, label=code:origin_static_file]
-{
-   "elementName": "Visibility Control SPA", 
-    "name": "Visibility Control SPA", 
-    "state": "In work", 
-    "classType": "GSUBSYSTEM", 
-    "variant": "MAIN", 
-    "domain": "VCC_EEDM", 
-    "creationUser": "Anonymous", 
-    "className": "SUBSYSTEM", 
-    "contentRelations": [
-        {
-            "destination": {
-                "elementName": "LTC 1", 
-                "name": "Name for LTC 1", 
-                "classType": "GLTC", 
-                "variant": "MAIN", 
-                "domain": "VCC_EEDM", 
-                "creationUser": "Anonymous", 
-                "className": "LTC", 
-                "state": "Frozen", 
-                "modificationUser": "Anonymous", 
-                "modificationDate": "2013-06-25T05:13:36+0000", 
-                "attributes": {
-                    "MaximumLatency": "250", 
-                    "Access control": "Access allowed", 
-                    "NominalLatency": "-1", 
-                    "RefinedConstraints": [], 
-                    .....
-                }, 
-                "creationDate": "2013-05-02T11:48:25+0000", 
-                "id": "1937212", 
-                "elementId": "1169278", 
-                "revision": 0
-            }, 
-            "contentAttributes": {}
-        }, 
-        .....   
-}
-\end{lstlisting}
-
-From the Listing~\ref{code:origin_static_file} shown above, the variable "elementName" that appears on the first row of the JSON file specifies the name of the sub-system that is visualized which has the value "Visibility Control System". You can also notice the variable "className" that appears on the 8th row of the JSON file which has the value "SUBSYSTEM". \\
-
-In order to explain the relationships between JSON objects found in a static flie, we created a meta-model which can help to understand the data found in the file, see figure~\ref{fig:old_metamodel} below.
-
-\begin{figure}[H]
-\centering
-\captionsetup{justification=centering}
-\vspace{0cm}% Adjust vertical spacing here
-\includegraphics[width=0.85\linewidth]{figure/new_model/Old_Metamodel.jpg}
-\caption{Old metamodel}
-\label{fig:old_metamodel}
-\end{figure}
-
-The meta-model shown in the figure~\ref{fig:old_metamodel} has sum up most of the variables found in the JSON file. The classes that we needed the most are the "contentRelations", "destination" and "attributes". You can notice that the class "contentRelations" has an association of one to many with the class "destination" and also the class "destination" has an association of zero to one with the class "contentRelations". The class "destination" has an association of one to one with the class "attribute". \\
-
-The objects of the class "destination" could be LC, port, data-element, data-type, REQSET, etc. In order to elaborate this, we will give an example of how it appears in a JSON file (see the lists that follows) and the Listing~\ref{code:lc_port_dataElem} after it : \\
-
-\begin{enumerate}
-\item a LC which is an object of a class \texttt{destination} has an object of a class "contentRelations",call it CR1,
-\item an object CR1 can have an array of objects of a class "destinations", a port being one of the object of a class  "destination",
-\item a port has an object of a class "contentRelations", call it CR2,
-\item an object CR2 can have an array of objects of a class "destinations", a data-element being one of the object of a class "destination",
-\item a data-element has an object of a class "contentRelations", call it CR3,
-\item an object CR3 can have an array of objects of a class "destinations", a data-type being one of the object of a class "destination", etc \\
-\end{enumerate} 
-
-\begin{lstlisting}[caption={A sample part of a JSON file showing the relationship between a LC, a port and a data-element},label=code:lc_port_dataElem]
-{
-  "destination": {
-      "elementName": "LC 1", 
-      "name": "Name for LC 1", 
-       ....., 
-      "contentRelations": [
-            {
-            "destination": {
-                "elementName": "PORT 1", 
-                "name": "Name for PORT 1", 
-                  ....., 
-                 "contentRelations": [
-                      {
-                      "destination": {
-                           "elementName": "DATA-ELEM 1", 
-                           "name": "Name for DATA-ELEM 1", 
-                            .... 
-                           "contentRelations": [
-                                 {
-                                  "destination": {
-                                  "elementName": "DATA-TYPE 1", 
-                                  "name": "Name for DATA-TYPE 1",    .....,   
-                "attributes": {
-                    "IODirection": "REQUIRE",
-                    ...
-}\\
-\end{lstlisting}
-
-If you take a look again at the Listing~\ref{code:lc_port_dataElem}, you can notice a variable with the name "attributes" near the end. This variable has another variable inside of it with the name "IODirection". The variable "IODirection" determines whether a port provides to another port or a port requires another port. The principle in this context of require and provide is that it explains about a dependencies between ports and when it comes to visualize the connection between LCs, we take a look at this variable to determine on how to map the ports in a component diagram.\\
-
-how it looks like, previous meta model, why it doesn't work out \todo{[to be filled in]}
-
-
-%%%%%%
-\subsection{Implementation I}
-The data retrieved from Elektra had so many information that were somehow not needed in the visualization. The first step we did was to find a way to omit the data that was not needed and keep the one that we only needed to visualize and that was the names of the LCs, names of the ports, the value of port that determines whether a port requires another port or a port provides to another port and also we need to keep the data element for each port.
-
-\subsubsection{Optimizing the raw JSON data}
-As you can see in the previous listing, the json data had lots of information that was necessary to be filtered. What we did was to write a java code that is able to read the original json data and get only the data that we will have used to do the visualization. Some of the JSON object that we had remained with are specifically the names of LCs, the ports for each LCs, the name of the ports, the IODirection of the port which determines the connection between the ports and and the name of the data element of the port.\\
-
-A sample code can be seen in the listing below where we first read a contentRelations JSON object to get its destinations, so first of all we get the LC, then an LC has a contentRelation JSON object and inside the object, it has a list of destinations. Now, we have a port JSON object, the port has element name and has an attribute JSON object which inside of it, the IODirection value can be retrieved. Finally we needed the name of the data element. The port JSON object is a destination that has a contentRelation JSON object, again, this object has destinations, on of the destination being a data element. The loop keeps on repeating until it has finished with all the LCs. Once the loop has finished, it saves the resulted JSON contents to a new file and this file will now be a model instance. \\
-
-To explain how the algorithm works, we will write down the steps that we follow :
-\begin{enumerate}
-\item Read from a original JSON file
-\item Get the name of the susbsytem
-\item Introduce loop 1 that gets all the LCs of the subsystem.
-\item Introduce loop 2 inside loop 1 that gets all the ports of a single LC
-\item Get the name of the port
-\item Get the name of the data-element
-\item Get the value value of \texttt{IODirection} of the port
-\item End of the loop 2 
-\item End of the loop 1
-\item Write an optimized content to a new file
-\end{enumerate}
-
-The result of the above explanation appears in the listing below :
-
-\begin{lstlisting}[caption=A sample part of the optimized JSON content,label=code:optimized_JSON]
-{
-  "elementName": "Visibility Control SPA",
-  "hasLC": [
-    {
-      "elementName": "LC 1",
-      "hasPort": [
-        {
-          "elementName": "PORT 1",
-          "IOdirection": "REQUIRE",
-          "dataElement": "DATA-ELEM 1"
-        }
-      ]
-    },
-    {
-      "elementName": "LC 2",
-      "hasPort": []
-    },
-    {
-      "elementName": "LC 3",
-      "hasPort": [
-        {
-          "elementName": "PORT 2",
-          "IOdirection": "REQUIRE",
-          "dataElement": "DATA-ELEM 2"
-        },
-        {
-          "elementName": "PORT 3",
-          "IOdirection": "REQUIRE",
-          "dataElement": "DATA-ELEM 3"
-        }
-        ....
-}
-\end{lstlisting}
-
-
-\subsubsection{Creating a new meta-model and model instance}
-Once the raw JSON data is optimized (Listing~\ref{code:optimized_JSON}), we created a meta-model and a model instance using the open-source tool JSON discoverer. Before getting to the point where we obtained the meta-model and the model instance, we want to explain how the discovering of JSON schema process work. Based on the paper written by the tool creators Javier Luis Cánovas Izquierdo and Jordi Cabot~\cite{Canovas}, the discovering process is a model-based process which is composed of three phases:  pre-discovery phase, single-service discovery phase, and multi-service discovery
-phase. The first phase aims to extract the low-level a JSON model out of a JSON document. The second phase is to obtain the schema information of a JSON document. The last phase aims at obtaining common schema of more than one JSON documents. Since the data of the sub-system Visiblity Control System that we extracted from Elektra was in one single JSON document, multi-service discovery phase was not used. \\
-
-With the optimized version of the raw JSON file, JSON discover provided us a very-simple-but-efficient meta-model. From Figure~\ref{fig:new_metamodel}, the meta-model comprises three classes \texttt{SubSystem}, \texttt{HasLC}, and \texttt{HasPort}. Each class has one or more attributes. \texttt{SubSystem} has an attribute \texttt{elementName} keeping the name of sub-system. The class \texttt{HasLC} has one attribute \texttt{elementName} keeping the name of LC. The class \texttt{HasPort} has three attributes (properties) namely \texttt{elementName} containing the name of port, \texttt{IODirection} specifying the type of port (\texttt{PROVIDE} or \texttt{REQUIRE}), and \texttt{dataElement} keeping the name of port. All attributes are \texttt{String} type of value.
-
-\begin{figure}[H]
-\centering
-\captionsetup{justification=centering}
-\vspace{0cm}% Adjust vertical spacing here
-\includegraphics[width=0.65\linewidth]{figure/new_model/new_metamodel.png}
-\caption{The meta-model of the optimized JSON document discovered by JSON discoverer tool}
-\label{fig:new_metamodel}
-\end{figure}
-
-The meta-model also has two class relationships: \texttt{hasLC} and \texttt{hasPort}. The first relationship is a composition meaning that the class \texttt{HasLC} will be destroyed if the class \texttt{SubSystem} is destroyed. The same type of relationship is also applied to the relationship between the class \texttt{HasLC} and \texttt{HasPort}. Both relationships have multiplicity \texttt{1..*} according to the optimized JSON document. Note that the annotations \texttt{coverage} included in all classes are resulted from the the JSON grammar rules the authors of JSON discoverer created to guide the generation of the JSON meta-model~\cite{Canovas}. \\
-
-As it has been mentioned that JSON discoverer also provides the discovery of data model (model instance). Using the same optimized JSON document, we obtained a model instance in XML\footnote{Extensible Markup Language} Metadata Interchange (XMI) file. A part of the file can be seen in Listing~\ref{code:model_instance_xmi}.
-
-\begin{lstlisting}[caption=Data model or model instance discovered by JSON discoverer,label=code:model_instance_xmi]
-<?xml version="1.0" encoding="UTF-8"?>
-<discoD:SubSystem
-    xmi:version="2.0"
-    xmlns:xmi="http://www.omg.org/XMI"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:discoD="http://jsonDiscoverer/discovered/SubSystem"
-    xsi:schemaLocation="http://jsonDiscoverer/discovered/SubSystem metamodel.ecore" elementName="Visibility Control SPA">
-  <hasLC elementName="LC 1">
-    <hasPort elementName="PORT 1" IODirection="REQUIRE" dataElement="DATA-ELEM 1"/>
-  </hasLC>
-  ...
-</discoD:SubSystem>
-\end{lstlisting}
-
-Using the editor from the EcoreTools Eclipse plug-in, the model instance and the properties of each class are visualized as seen in Figure~\ref{fig:new_model_instance}. From the model instance (left), it can be seen that the attribute \texttt{elementName} of the class \texttt{SubSystem} is \texttt{"Visibility Control SPA"}. It has 18 children (\texttt{HasLC}), \texttt{LC 1}, \texttt{LC 2}, \texttt{LC 3}, ..., \texttt{LC 18}. Each child has its own \texttt{HasPort}--\texttt{PORT 1} belongs to \texttt{LC 1}, for example. The properties of each class are shown on the right side of the figure. Note that the model instance was constructed conforming to the meta-model in Figure~\ref{fig:new_metamodel}.
-
-\begin{figure}[H]
-\centering
-\captionsetup{justification=centering}
-\vspace{0cm}% Adjust vertical spacing here
-\includegraphics[width=0.95\linewidth]{figure/new_model/new_model_instance.png}
-\caption{The model instance resulted from the optimized JSON document}
-\label{fig:new_model_instance}
-\end{figure}
-
-\subsubsection{Creating a visualization using Acceleo and PlantUML}
-Up to this point, we already had the meta-model and the model-instance from the optimized JSON document. The next step was to do M2T transformation, which could be done by create an Acceleo template for textual description. The complete template is included in Appendix~\ref{app1} Section~\ref{app1:result_acceleo_template}. Only important pieces of code will be explained in this section.\\
-
-\subsubsection*{Defining sub-system}
-\begin{lstlisting}[caption=Defining \texttt{artifact} for the sub-system,label=code:defining_subsystem]
-...
-[template public generateElement(subsystem : SubSystem)]
-...
-artifact [subsystem.elementName.replaceAll(' ', '')/] {
-...
-}
-\end{lstlisting}
-
-The sub-system \texttt{Visibility Control SPA} is visualized as an \texttt{artifact} following by its name. To be able to get the name, we first created a \texttt{SubSystem}-type parameter, namely \texttt{subsystem}. With this parameter, we could access its attribute \texttt{elementName}. An \texttt{replace (String substring, String replacement)} was used to remove which space in the value because PlantUML does not support name with white space. Thus, the name printed in the visualization was \texttt{VisibilityControlSPA}.
-
-\subsubsection*{Defining LCs}
-
-\begin{lstlisting}[caption=Defining \texttt{component} for the LCs,label=code:defining_lc]
-...
-[for (lc:HasLC | subsystem.hasLC)]
-['['/][lc.elementName.replace(' ', '')/][']'/]
-[/for]
-...
-\end{lstlisting}
-
-Inside the \texttt{artifact}, a for-loop statement was for retrieving all LCs belonging to the sub-system. The for-loop had a parameter \texttt{lc} belonging to the class \texttt{HasLC} which could be accessed via the class relationship \texttt{hasLC}. The name of the LCs could be obtained by \texttt{lc.elementName}, and the \texttt{replace} operation was used as well to remove white space.
-
-
-\subsubsection*{Defining ports and connections}
-
-\begin{lstlisting}[caption=Defining ports and connections,label=code:defining_ports_connections]
-...
-[for (lc:HasLC | subsystem.hasLC)]
-[for (port:HasPort | lc.hasPort)]
-[for (lc2:HasLC | subsystem.hasLC)]
-[for (port2:HasPort | lc2.hasPort)]
-[if ((port2.dataElement = port.dataElement) and not (port2.elementName = port.elementName) and not (lc.elementName = lc2.elementName)) and (lc2.elementName.replace(' ', '').substring(3).toInteger() > lc.elementName.replace(' ', '').substring(3).toInteger())]
-[if not (port.IODirection = port2.IODirection)]
-[lc.elementName.replace(' ', '')/] "[port.elementName.substring(6)/]['-'/][port.dataElement.substring(11)/]" [if (port.IODirection = 'REQUIRE')]#--([elseif (port.IODirection = 'PROVIDE')]#--0[/if][if (port2.IODirection = 'REQUIRE')])--#[elseif (port2.IODirection = 'PROVIDE')]0--#[/if] "[port2.elementName.substring(6)/]['-'/][port2.dataElement.substring(11)/]" [lc2.elementName.replace(' ', '')/]
-[elseif (port.IODirection = port2.IODirection)]
-[/if]
-[/if]
-[/for]
-[/for]
-[/for]
-[/for]
-...
-\end{lstlisting}
-
-Ports and connections had to be in the same line, as the following syntax:\\
-\begin{center}
-\texttt{$A_1$ "$B_1$-$C_1$" \#--(0--\# "$B_2$-$C_2$" $A_2$}
-\end{center}
-\vspace{1em}
-\texttt{A} is the name of a LC. \texttt{B} is the number part of a port name, for example, \texttt{1} is the number part of \texttt{PORT 1}. \texttt{C} is the data element of the port. The connection between two ports was defined based on the type of a port (attribute \texttt{IODirection}), \texttt{\#--(} for REQUIRE port and \texttt{\#--O} for PROVIDE port. \\
-
-To obtain the name of all LCs and their ports, we created a new for-loop looping through \texttt{HasLC} and an inner for-loop to get port(s) of each LC looping through \texttt{HasPort}. This resulted in obtaining \texttt{$A_1$ "$B_1$-$C_1$"}. After that, we created another two for-loops inside the inner for-loop in order to search for each LC's pair, resulting in obtaining \texttt{"$B_2$-$C_2$" $A_2$}. An if-statement was used to pair two ports by checking if their attributes \texttt{dataElement} have the same value, and validate that the two LCs were not the same LC. For the connection between two ports, two if-statements were created: one to check the type of each port, and another to pair between two ports having different types. This results in having two representations of connections as follow:
-
+The interview questions were divided into four groups based on the goal of each question, as follow:
+\vspace{0.5em}
 \begin{itemize}
-    \item REQUIRE-PROVIDE, \texttt{\#--(0--\#}
-    \item PROVIDE-REQUIRE, \texttt{\#--0)--\#}
+    \item Getting to know interviewee,
+    \item Emphasizing on understanding the use of the Database,
+    \item Identifying the needs of stakeholders, and
+    \item Opinions on the automated visualization prototype.
 \end{itemize}
+\vspace{0.5em}
+During each interview session, an interviewee was asked many questions from the list in sequence, but he/she was not limited to those pre-determined questions. Some questions straying from the list were asked if the interviewers found it appropriated.\\
 
-From the template, Acceleo generated a textual description that could be visualized using PlantUML. Listing~\ref{code:plantuml_textual} shows a piece of it (complete textual description is included in Appendix~\ref{app1} Section~\ref{app1:result_textual_desc}.
-
-\begin{lstlisting}[caption=A piece of textual representation generated from Acceleo template engine,label=code:plantuml_textual]
-@startuml
-
-skinparam nodesep 80
-skinparam ranksep 80
-
-artifact VisibilityControlSPA {
-[LC1]
-[LC2]
-[LC3]
-...
-[LC18]
-
-LC1 "1-1" #--(0--# "165-1" LC18
-LC3 "2-2" #--(0--# "144-2" LC17
-LC3 "4-4" #--(0--# "116-4" LC10
-...
-LC15 "129-91" #--0)--# "156-91" LC18
-}
-
-@enduml
-\end{lstlisting}
+All conversions in the interviews were recorded which were then transcribed and analyzed later to answer the research questions. The list of questions and transcripts can be seen in Appendix~\ref{app2}.
 
 
-%------------------------------------------------------------------%
-%%%%%%
-\section{Phase II}
+\section{Data analysis}
+\subsection{Meta-model from the JSON data}
+To understand the raw JSON data from the Database, we created a meta-model of the data in order to see the schema of the file that specifies the relationship among the artifacts. The process of the meta-model was created is presented in Section~\ref{IM:analyzing_the_raw_json_data}.
 
-\subsection{Data collection II}
+\subsection{Coding}
+\label{ME:coding}
+Apart from the raw JSON data extracted from the Database, another set of data was collected from interviewing stakeholders. We started the analysis of the data by listening to the tape records twice in order to understand the conversations and to get some key points that the interviewee emphasized during the interviews. The process continued by transcribing the tape records word by word manually. We decided not to use any voice recognition software due to the fact that the software has to be trained for each voice, and it requires speakers to speak slowly making the interview inefficient.\\
 
-\subsubsection{Preparation for the interview}
-The article \cite{Basili} has explained couple of steps to follow when collecting data. We have applied the first two steps mentioned in article \cite{Basili}, the steps are establishing the goals for data collection and developing a list of questions of interests. The goals we have set for this interview are getting to knowing important artifacts on the visualization output from the each stakeholder, getting to know the artifacts that most stakeholder needs in their line of work, finding the metrics that we can use to determine the important artifacts and also understanding the needs of the stakeholders. 
+The transcript files were then analyzed using coding method. To give a basic description what coding is, it is one of the methods used in qualitative data analysis especially the analysis of interview transcripts. It is the process of capturing essential words or phrases from set of data that give the same ideas, themes, and categories~\cite{OnlineQDA}. Before starting the coding process, a list of codes were created based on the goals of the pre-determined questions presented in Section~\ref{ME:data_from_interviewing_stakeholders}. Once we had the list of codes, each of us began coding the transcripts files. Then, we compared the results from coding together to summarize the coded data. The list of codes and the results are presented in Section~\ref{IM:coding_the_interview_transcripts} and Section~\ref{RE:results_from_the_coding}, respectively.
 
-\subsubsection{Selecting a group of stakeholders}
-Since the visualization is based on a single subsystem namely Visibility Control SPA, we would prefer to interview the stakeholders that uses this subsystem often. These are the primary stakeholders since they are directly interacting with the ELektra.
 
-\subsubsection{Interviewing the selected stakeholders}
-\todo{[to be filled in]}
+%%%%%
+\begin{comment}
+\subsection{Identifying stakeholders}
+On referring to the article of Community Tool Box~\cite{community_tool_box}, there are three different kinds of stakeholders: primary stakeholders, secondary stakeholders and key stakeholders. In the later part of the study, we interviewed different stakeholders. Some of the advantages of interviewing the stakeholders include getting more ideas, obtaining different perspectives, helping to avoid misunderstanding of the problem, and also increasing the chances of delivering a valuable output to the stakeholders.\\
 
-%%%%%%
-\subsection{Data analysis II}
+The primary stakeholders in our case are the people who are directly interacting with the Database, also named beneficiaries and we, the students are the target. The act of automated visualization can aid the beneficiaries in obtaining a simplified overview of a data found in the Database which in turn can provide a quick understanding of the needed artifacts and the interactions between these artifacts. \\
 
-\subsubsection{Identifying the needs of the stakeholders}
-\todo{[to be filled in]}
+The secondary stakeholders are the ones who are indirectly affected by the Database. They are the ones who may be affected by the decision made by the stakeholders who interacts directly with the Database, which in turn will be due to the use of the obtained visualization. Our supervisors at the university can also be in a group of secondary stakeholders, they are not directly interacting with the obtained visualization but they also play a greater role in pushing forward our goals for delivering a good visualization. \\
 
-\subsubsection{Discovering metrics}
-\todo{[to be filled in]}
+The key stakeholders are the one funding this project and these can be the two supervisors from the company. All these stakeholders play a very important role in bringing efforts that could result to a better solution of the problem that we intend to resolve.\\
 
-%%%%%%
-\subsection{Implementation II}
-
-\subsubsection{Applying the metrics to the visualization}
-\todo{[to be filled in]}
+We, the students and as part of the primary stakeholders (targets), intended to provide a visualization output that could aid in quick understanding of the data stored in the Database and also provided the job opportunity for the need of having such a visualization tool to give the overview of the architecture. \\
+\end{comment}
